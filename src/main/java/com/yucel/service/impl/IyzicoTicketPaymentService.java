@@ -1,19 +1,20 @@
 package com.yucel.service.impl;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iyzipay.model.BinNumber;
 import com.iyzipay.model.Locale;
 import com.iyzipay.model.Payment;
 import com.iyzipay.model.PaymentCard;
 import com.iyzipay.request.CreatePaymentRequest;
+import com.yucel.model.CreatePaymentRequestWrapper;
 import com.yucel.model.DiscountCodes;
 import com.yucel.model.IncomingPaymentPayload;
+import com.yucel.persistence.service.TicketPaymentPersistenceService;
 import com.yucel.service.BinNumberChecker;
 import com.yucel.service.DiscountCodeValidator;
 import com.yucel.service.PaymentApiOptions;
@@ -40,6 +41,9 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 
 	@Autowired
 	PaymentRequestBuilder paymentRequestBuilder;
+	
+	@Autowired
+	TicketPaymentPersistenceService ticketPaymentPersistenceService;
 
 	@Override
 	public Payment tryPayment(IncomingPaymentPayload paymentPayload) {
@@ -84,10 +88,31 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 			return payment;
 		}
 
+		
 		CreatePaymentRequest paymentRequest = paymentRequestBuilder.buildPaymentRequest(payment, paymentPayload);
-
+		CreatePaymentRequestWrapper requestWrapper = new CreatePaymentRequestWrapper();
+		requestWrapper.setId(conversationId);
+		requestWrapper.setCreatePaymentRequest(paymentRequest);
+		requestWrapper.setPayment(payment);
+		// save request data before the call
+		requestWrapper = ticketPaymentPersistenceService.save(requestWrapper);
+		System.out.println("before save");
+		System.out.println(payment);
+		System.out.println(requestWrapper.getPayment());
+		
 		payment = Payment.create(paymentRequest, options.getOptions());
 
+		// save the result
+		requestWrapper.setPayment(payment);
+		requestWrapper = ticketPaymentPersistenceService.save(requestWrapper);
+		System.out.println("after save");
+		System.out.println(payment);
+		System.out.println(requestWrapper.getPayment());
+
+		List<CreatePaymentRequestWrapper> allItems = ticketPaymentPersistenceService.findAll();
+		for (CreatePaymentRequestWrapper createPaymentRequestWrapper : allItems) {
+			System.out.println(createPaymentRequestWrapper.getId());
+		}
 		return payment;
 	}
 
@@ -144,6 +169,14 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		}
 
 		return payment;
+	}
+
+	@Override
+	public Payment getPayment(String id) {
+		
+		CreatePaymentRequestWrapper createPaymentRequestWrapper = ticketPaymentPersistenceService.findByConversationId(id);
+		
+		return createPaymentRequestWrapper.getPayment();
 	}
 
 	

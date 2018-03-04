@@ -7,4 +7,6 @@ public interface TicketPaymentService {
 	
 	public Payment tryPayment(IncomingPaymentPayload paymentRequest);
 
+	public Payment getPayment(String id);
+
 }

@@ -32,6 +32,6 @@ public class TicketPaymentResourceAssembler extends ResourceAssemblerSupport<Pay
 	}
 
 	public Link linkToSingleResource(Payment entity) {
-		return entityLinks.linkToSingleResource(TicketPaymentResource.class, entity.getPaymentId());
+		return entityLinks.linkToSingleResource(TicketPaymentResource.class, entity.getConversationId());
 	}
 }
