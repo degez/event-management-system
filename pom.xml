@@ -152,6 +152,14 @@
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>4.3.0</version>
+				<configuration>
+					<repoToken>akFdBpey0DCae66szxub5tNASlg2WgUHo</repoToken>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
