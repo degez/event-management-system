@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iyzipay.model.BinNumber;
 import com.iyzipay.model.Locale;
-import com.yucel.exception.BinNumberNotFoundException;
 import com.yucel.model.BinNumberResourceConstant;
 import com.yucel.resource.BinNumberResource;
 import com.yucel.resource.BinNumberResourceAssembler;
