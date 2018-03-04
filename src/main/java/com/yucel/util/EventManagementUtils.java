@@ -1,5 +1,6 @@
 package com.yucel.util;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -11,6 +12,7 @@ import com.yucel.model.DiscountCodes;
  *
  */
 public class EventManagementUtils {
+	public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
 
 	public static DiscountCodes getIfDiscountExists(String discountCode) {
 
@@ -48,5 +50,9 @@ public class EventManagementUtils {
 		String conversationId = "";
 		conversationId = paymentCard.getCardNumber().replace(" ", "").trim() + "-" + System.currentTimeMillis();
 		return conversationId;
+	}
+	
+	public static BigDecimal percentage(BigDecimal base, BigDecimal percent){
+	    return base.multiply(percent).divide(ONE_HUNDRED);
 	}
 }
