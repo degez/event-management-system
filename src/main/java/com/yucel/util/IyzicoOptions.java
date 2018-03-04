@@ -7,6 +7,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.iyzipay.Options;
+import com.yucel.service.PaymentApiOptions;
 
 @Service
 @PropertySource(value = "classpath:application.properties")
