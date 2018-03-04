@@ -20,6 +20,12 @@ import com.yucel.resource.BinNumberResourceAssembler;
 import com.yucel.service.BinNumberChecker;
 
 
+/**
+ * Controller for Bin number operations
+ * 
+ * @author yucel.ozan
+ *
+ */
 @RestController
 @ExposesResourceFor(BinNumberResource.class)
 @RequestMapping(value = BinNumberResourceConstant.ROOT)

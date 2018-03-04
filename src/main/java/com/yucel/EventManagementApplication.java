@@ -13,8 +13,6 @@ import com.iyzipay.model.Locale;
 import com.yucel.service.BinNumberChecker;
 
 @SpringBootApplication()
-//		scanBasePackages = { "com.yucel.service.impl", "com.yucel.util", "com.yucel.controller",
-//		"com.yucel.resource" })
 @PropertySource(value = "classpath:application.properties")
 public class EventManagementApplication {
 
