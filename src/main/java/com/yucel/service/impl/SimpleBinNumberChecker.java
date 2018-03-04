@@ -2,6 +2,7 @@ package com.yucel.service.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,8 @@ public class SimpleBinNumberChecker implements BinNumberChecker {
 
 	private static final String PAYMENT_NOT_SUPPORTED_ERROR_CODE = "PAYMENT_NOT_SUPPORTED";
 	private static final String PAYMENT_NOT_SUPPORTED_ERROR_MESSAGE = "Payment not supported for this type of card or bank";
-	private static HashMap<Long, String> validCreditCardPaymentBanksIM;
-	private static HashMap<Long, String> validDebitCardPaymentBanksIM;
+	private static Map<Long, String> validCreditCardPaymentBanksIM;
+	private static Map<Long, String> validDebitCardPaymentBanksIM;
 
 	@Autowired
 	PaymentApiOptions options;
@@ -33,13 +34,12 @@ public class SimpleBinNumberChecker implements BinNumberChecker {
 		validCreditCardPaymentBanks.put(64L, "İş Bankası");
 		validCreditCardPaymentBanks.put(111L, "Finansbank");
 
-		validCreditCardPaymentBanksIM = (HashMap<Long, String>) Collections
-				.unmodifiableMap(validCreditCardPaymentBanks);
+		validCreditCardPaymentBanksIM = Collections.unmodifiableMap(validCreditCardPaymentBanks);
 
 		HashMap<Long, String> validDebitCardPaymentBanks = new HashMap<>();
 		validDebitCardPaymentBanks.put(12L, "Halk Bankası");
 
-		validDebitCardPaymentBanksIM = (HashMap<Long, String>) Collections.unmodifiableMap(validCreditCardPaymentBanks);
+		validDebitCardPaymentBanksIM = Collections.unmodifiableMap(validCreditCardPaymentBanks);
 
 	}
 

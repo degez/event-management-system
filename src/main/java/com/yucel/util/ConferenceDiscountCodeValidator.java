@@ -5,11 +5,14 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
 
+import org.springframework.stereotype.Service;
+
 import com.iyzipay.model.Payment;
 import com.yucel.model.DiscountCodes;
 import com.yucel.model.IncomingPaymentPayload;
 import com.yucel.service.DiscountCodeValidator;
 
+@Service
 public class ConferenceDiscountCodeValidator implements DiscountCodeValidator {
 
 	private static final String TURKEY_ZONE_CODE = "Turkey";
@@ -35,7 +38,7 @@ public class ConferenceDiscountCodeValidator implements DiscountCodeValidator {
 
 	@Override
 	public Payment checkDiscountCode(IncomingPaymentPayload incomingPaymentPayload) {
-		Payment payment;
+		Payment payment = new Payment();
 		String discountCode = incomingPaymentPayload.getDiscountCode();
 
 		DiscountCodes discountEnum = EventManagementUtils.getIfDiscountExists(discountCode);
@@ -44,7 +47,7 @@ public class ConferenceDiscountCodeValidator implements DiscountCodeValidator {
 			payment = checkDateRange(discountEnum);
 			return payment;
 		} else {
-			return null;
+			return payment;
 		}
 
 	}

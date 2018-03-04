@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iyzipay.model.BinNumber;
 import com.iyzipay.model.Locale;
 import com.iyzipay.model.Payment;
@@ -91,7 +93,8 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 
 	private Payment calculatePayment(Payment payment, IncomingPaymentPayload paymentPayload) {
 
-		BigDecimal price = discountCodeValidator.getPriceForThePeriod();
+		BigDecimal perPrice = discountCodeValidator.getPriceForThePeriod();
+		BigDecimal price = BigDecimal.ZERO;
 		BigDecimal discountedPrice = null;
 		if (price == null) {
 			payment.setErrorCode(PERIOD_ERROR_CODE);
@@ -100,7 +103,7 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		}
 
 		for (int i = 0; i < paymentPayload.getQuantity(); i++) {
-			price = price.add(price);
+			price = price.add(perPrice);
 		}
 
 		// calculate discount if there is any
@@ -143,4 +146,5 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		return payment;
 	}
 
+	
 }

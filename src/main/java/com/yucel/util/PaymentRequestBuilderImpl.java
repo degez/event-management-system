@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.iyzipay.model.Address;
 import com.iyzipay.model.BasketItem;
 import com.iyzipay.model.Buyer;
@@ -16,9 +18,12 @@ import com.iyzipay.model.PaymentGroup;
 import com.iyzipay.request.CreatePaymentRequest;
 import com.yucel.model.IncomingPaymentPayload;
 import com.yucel.prototype.PaymentRequestObjectFactory;
+import com.yucel.prototype.model.AddressPrototype;
+import com.yucel.prototype.model.BasketItemPrototype;
 import com.yucel.prototype.model.BuyerPrototype;
 import com.yucel.service.PaymentRequestBuilder;
 
+@Service
 public class PaymentRequestBuilderImpl implements PaymentRequestBuilder{
 
 
@@ -63,18 +68,18 @@ public class PaymentRequestBuilderImpl implements PaymentRequestBuilder{
 
 		request.setBuyer(buyer);
 
-		Address shippingAddress = (Address) PaymentRequestObjectFactory.getPrototype(Address.class.getName()).clone();
+		Address shippingAddress = (Address) PaymentRequestObjectFactory.getPrototype(AddressPrototype.class.getName()).clone();
 		shippingAddress.setContactName(cardHolderName);
 		request.setShippingAddress(shippingAddress);
 
-		Address billingAddress = (Address) PaymentRequestObjectFactory.getPrototype(Address.class.getName()).clone();
+		Address billingAddress = (Address) PaymentRequestObjectFactory.getPrototype(AddressPrototype.class.getName()).clone();
 		billingAddress.setContactName(cardHolderName);
 		request.setBillingAddress(billingAddress);
 
 		List<BasketItem> basketItems = new ArrayList<BasketItem>();
 		
 		for (int i = 0; i < paymentPayload.getQuantity(); i++) {
-			BasketItem basketItem = (BasketItem) PaymentRequestObjectFactory.getPrototype(BasketItem.class.getName()).clone();
+			BasketItem basketItem = (BasketItem) PaymentRequestObjectFactory.getPrototype(BasketItemPrototype.class.getName()).clone();
 			basketItem.setId("ticket"+(i+1));
 			basketItem.setPrice(singleItemPrice);
 			basketItems.add(basketItem);

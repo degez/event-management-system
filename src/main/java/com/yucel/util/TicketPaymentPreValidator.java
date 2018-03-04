@@ -31,7 +31,7 @@ public class TicketPaymentPreValidator {
 			return payment;
 		}
 		
-		return null;
+		return payment;
 	}
 
 	public static Boolean validatePaymentPayload(IncomingPaymentPayload paymentPayload) {

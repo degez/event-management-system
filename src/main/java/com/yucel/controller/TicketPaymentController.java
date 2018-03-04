@@ -43,10 +43,9 @@ public class TicketPaymentController {
 			throw new InvalidRequestException("Invalid " + paymentRequest.getClass().getSimpleName(), bindingResult);
 		}
 		Payment payment = paymentService.tryPayment(paymentRequest);
-
 		Resource<String> resource = new Resource<String>(payment.getPaymentId());
 		resource.add(paymentResourceAssembler.linkToSingleResource(payment));
-
+		System.out.println(payment);
 		return new ResponseEntity<Resource<String>>(resource, HttpStatus.CREATED);
 	}
 
