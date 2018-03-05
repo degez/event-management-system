@@ -38,14 +38,22 @@ import com.yucel.model.TicketPaymentResourceConstant;
 @TestPropertySource(locations = "classpath:application.properties")
 public class TicketPaymentControllerTest {
 
+	private static final String HSBC_DEBIT_CARD_NO = "4059030000000009";
+	private static final String CREDIT_CARD_NO = "5526080000000006";
+	private static final String INVALID_BIN_CREDIT_CARD_NO = "1000040000000011";
+	private static final String DEBIT_CARD_NO = "4475050000000003";
+	private static final String DENIZBANK_CREDIT_CARD_NO = "4603450000000000";
 	private static final int INVALID_QUANTITY = -1;
 	private static final String ERROR_CODE_KEY = "errorCode";
+
 	private static final String DISCOUNT_ERROR_CODE = "DISCOUNT_DATE_ERROR";
 	private static final String QUANTITY_ERROR_CODE = "QUANTITY_ERROR_CODE";
+	private static final String BIN_NUMBER_ERROR_CODE = "5066";
 	private static final String MISSING_INFO_ERROR_CODE = "MISSING_INFO_ERROR_CODE";
+	private static final String TICKET_NOT_FOUND_ERROR_CODE = "could not find payment with the id: '-1'.";
+	private static final String PAYMENT_NOT_SUPPORTED_ERROR_CODE = "PAYMENT_NOT_SUPPORTED";
+	private static final Object BINDING_ERROR_CODE = "Invalid IncomingPaymentPayload";
 
-	
-	
 	// private static final String BIN_NUMBER = "589004";
 	// private static final String INVALID_BIN_NUMBER = "101001";
 	// private static final String BIN_NUMBER_ERROR_CODE = "5066";
@@ -59,7 +67,7 @@ public class TicketPaymentControllerTest {
 	public void prepare() {
 		PaymentCard card = new PaymentCard();
 		card.setCardHolderName("yucel ozan");
-		card.setCardNumber("5890040000000016");
+		card.setCardNumber(CREDIT_CARD_NO);
 		card.setExpireMonth("12");
 		card.setExpireYear("2030");
 		card.setRegisterCard(0);
@@ -84,16 +92,52 @@ public class TicketPaymentControllerTest {
 	}
 
 	@Test
+	public void test_doPaymentBindingError() throws Exception {
+
+		boolean isRightException = false;
+
+		payload.setQuantity(null);
+		MockHttpServletRequestBuilder request = preparePaymentRequest();
+
+		ResultActions result = null;
+		try {
+			result = mvc.perform(request);
+		} catch (Exception e) {
+			if (BINDING_ERROR_CODE.equals(e.getCause().getMessage())) {
+				isRightException = true;
+			}
+		}
+
+		assertTrue(isRightException);
+		assertTrue(result == null);
+
+		payload.setQuantity(1);
+
+	}
+
+	@Test
+	public void test_doPaymentWithDebit() throws Exception {
+		payload.getPaymentCard().setCardNumber(DEBIT_CARD_NO);
+		MockHttpServletRequestBuilder request = preparePaymentRequest();
+
+		ResultActions result = mvc.perform(request);
+
+		result.andExpect(status().is2xxSuccessful());
+		payload.getPaymentCard().setCardNumber(CREDIT_CARD_NO);
+
+	}
+
+	@Test
 	public void test_doPaymentWithNotOnDateDiscount() throws Exception {
 		boolean isRightException = false;
 		isRightException = doDiscountedRequestWithError(DiscountCodes.GAMMA.toString());
-		
+
 		assertTrue(isRightException);
-		
+
 		isRightException = false;
 		isRightException = doDiscountedRequestWithError(DiscountCodes.BECK.toString());
 		assertTrue(isRightException);
-		
+
 		isRightException = false;
 		isRightException = doDiscountedRequestWithError(DiscountCodes.CUNNINGHAM.toString());
 		assertTrue(isRightException);
@@ -101,10 +145,11 @@ public class TicketPaymentControllerTest {
 		isRightException = false;
 		isRightException = doDiscountedRequestWithError(DiscountCodes.AGILE.toString());
 		assertTrue(isRightException);
-		
+
 		// below method does not work because we do not get error response on
-		//junit
-//		result.andExpect(status().is5xxServerError()).andExpect(jsonPath(MESSAGE_KEY, is(DISCOUNT_ERROR_CODE)));
+		// junit
+		// result.andExpect(status().is5xxServerError()).andExpect(jsonPath(MESSAGE_KEY,
+		// is(DISCOUNT_ERROR_CODE)));
 
 	}
 
@@ -117,8 +162,8 @@ public class TicketPaymentControllerTest {
 		try {
 			result = mvc.perform(request);
 		} catch (Exception e) {
-			if(DISCOUNT_ERROR_CODE.equals(e.getCause().getMessage())) {
-				return true; 
+			if (DISCOUNT_ERROR_CODE.equals(e.getCause().getMessage())) {
+				return true;
 			}
 		}
 		return false;
@@ -126,7 +171,7 @@ public class TicketPaymentControllerTest {
 
 	@Test
 	public void test_doPaymentWithInvalidDiscount() throws Exception {
-		
+
 		boolean isRightException = false;
 
 		payload.setDiscountCode("KALDIRIM");
@@ -136,7 +181,7 @@ public class TicketPaymentControllerTest {
 		try {
 			result = mvc.perform(request);
 		} catch (Exception e) {
-			if(DISCOUNT_ERROR_CODE.equals(e.getCause().getMessage())) {
+			if (DISCOUNT_ERROR_CODE.equals(e.getCause().getMessage())) {
 				isRightException = true;
 			}
 		}
@@ -145,49 +190,118 @@ public class TicketPaymentControllerTest {
 		assertTrue(result == null);
 
 	}
-	
+
+	@Test
+	public void test_doPaymentWithUnsupportedBankForCreditCard() throws Exception {
+
+		boolean isRightException = false;
+
+		payload.getPaymentCard().setCardNumber(DENIZBANK_CREDIT_CARD_NO);
+		MockHttpServletRequestBuilder request = preparePaymentRequest();
+
+		ResultActions result = null;
+		try {
+			result = mvc.perform(request);
+		} catch (Exception e) {
+			if (PAYMENT_NOT_SUPPORTED_ERROR_CODE.equals(e.getCause().getMessage())) {
+				isRightException = true;
+			}
+		}
+
+		assertTrue(isRightException);
+		assertTrue(result == null);
+
+	}
+
+	@Test
+	public void test_doPaymentWithUnsupportedBankForDebitCard() throws Exception {
+
+		boolean isRightException = false;
+
+		payload.getPaymentCard().setCardNumber(HSBC_DEBIT_CARD_NO);
+		MockHttpServletRequestBuilder request = preparePaymentRequest();
+
+		ResultActions result = null;
+		try {
+			result = mvc.perform(request);
+		} catch (Exception e) {
+			if (PAYMENT_NOT_SUPPORTED_ERROR_CODE.equals(e.getCause().getMessage())) {
+				isRightException = true;
+			}
+		}
+
+		assertTrue(isRightException);
+		assertTrue(result == null);
+		payload.getPaymentCard().setCardNumber(CREDIT_CARD_NO);
+
+	}
+
+	@Test
+	public void test_doPaymentWithInvalidBinNumber() throws Exception {
+
+		boolean isRightException = false;
+
+		payload.getPaymentCard().setCardNumber(INVALID_BIN_CREDIT_CARD_NO);
+		MockHttpServletRequestBuilder request = preparePaymentRequest();
+
+		ResultActions result = null;
+		try {
+			result = mvc.perform(request);
+		} catch (Exception e) {
+			if (BIN_NUMBER_ERROR_CODE.equals(e.getCause().getMessage())) {
+				isRightException = true;
+			}
+		}
+
+		assertTrue(isRightException);
+		assertTrue(result == null);
+		payload.getPaymentCard().setCardNumber(CREDIT_CARD_NO);
+
+	}
+
 	@Test
 	public void test_doPaymentWithInvalidQuantity() throws Exception {
-		
+
 		boolean isRightException = false;
-		
+
 		payload.setQuantity(INVALID_QUANTITY);
 		MockHttpServletRequestBuilder request = preparePaymentRequest();
-		
+
 		ResultActions result = null;
 		try {
 			result = mvc.perform(request);
 		} catch (Exception e) {
-			if(QUANTITY_ERROR_CODE.equals(e.getCause().getMessage())) {
+			if (QUANTITY_ERROR_CODE.equals(e.getCause().getMessage())) {
 				isRightException = true;
 			}
 		}
-		
+
 		assertTrue(isRightException);
 		assertTrue(result == null);
-		
+
 	}
-	
+
 	@Test
 	public void test_doPaymentWithEmptyField() throws Exception {
-		
+
 		boolean isRightException = false;
-		
-		payload.getPaymentCard().setCardNumber(null);;
+
+		payload.getPaymentCard().setCardNumber(null);
 		MockHttpServletRequestBuilder request = preparePaymentRequest();
-		
+
 		ResultActions result = null;
 		try {
 			result = mvc.perform(request);
 		} catch (Exception e) {
-			if(MISSING_INFO_ERROR_CODE.equals(e.getCause().getMessage())) {
+			if (MISSING_INFO_ERROR_CODE.equals(e.getCause().getMessage())) {
 				isRightException = true;
 			}
 		}
-		
+
 		assertTrue(isRightException);
 		assertTrue(result == null);
-		
+		payload.getPaymentCard().setCardNumber(CREDIT_CARD_NO);
+
 	}
 
 	private MockHttpServletRequestBuilder preparePaymentRequest() throws JsonProcessingException {
@@ -222,5 +336,27 @@ public class TicketPaymentControllerTest {
 
 	}
 	
+	@Test
+	public void test_getInvalidPayment() throws Exception {
+		
+		boolean isRightException = false;
+
+		String conversationId = "-1";
+		
+		MockHttpServletRequestBuilder requestForGet = get(TicketPaymentResourceConstant.ROOT + "/" + conversationId)
+				.contentType(MediaType.APPLICATION_JSON);
+		
+		ResultActions resultForGet = null;
+		try {
+			resultForGet = mvc.perform(requestForGet);
+		} catch (Exception e) {
+			if (TICKET_NOT_FOUND_ERROR_CODE.equals(e.getCause().getMessage())) {
+				isRightException = true;
+			}
+		}
+		assertTrue(isRightException);
+		assertTrue(resultForGet == null);
+		
+	}
 
 }

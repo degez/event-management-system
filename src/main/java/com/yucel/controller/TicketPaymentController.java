@@ -67,7 +67,7 @@ public class TicketPaymentController {
 	public ResponseEntity<TicketPaymentResource> getPayment(@PathVariable(value = "id") String id) {
 		Payment entity = paymentService.getPayment(id);
 		if (entity == null) {
-			throw new TicketPaymentNotFoundException(String.valueOf(id));
+			throw new TicketPaymentNotFoundException(id);
 		}
 		final TicketPaymentResource resource = paymentResourceAssembler.toResource(entity);
 		return ResponseEntity.ok(resource);
