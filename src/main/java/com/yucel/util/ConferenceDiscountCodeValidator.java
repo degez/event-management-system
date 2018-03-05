@@ -12,6 +12,12 @@ import com.yucel.model.DiscountCodes;
 import com.yucel.model.IncomingPaymentPayload;
 import com.yucel.service.DiscountCodeValidator;
 
+/**
+ * This object checks if the code is a valid discount code
+ * 
+ * @author yucel.ozan
+ *
+ */
 @Service
 public class ConferenceDiscountCodeValidator implements DiscountCodeValidator {
 
@@ -36,6 +42,9 @@ public class ConferenceDiscountCodeValidator implements DiscountCodeValidator {
 	private static final LocalDate laggardStart = LocalDate.of(2018, Month.MAY, 1);
 	private static final LocalDate laggardEnd = LocalDate.of(2018, Month.MAY, 27);
 
+	/* (non-Javadoc)
+	 * @see com.yucel.service.DiscountCodeValidator#checkDiscountCode(com.yucel.model.IncomingPaymentPayload)
+	 */
 	@Override
 	public Payment checkDiscountCode(IncomingPaymentPayload incomingPaymentPayload) {
 		Payment payment = new Payment();
@@ -47,11 +56,19 @@ public class ConferenceDiscountCodeValidator implements DiscountCodeValidator {
 			payment = checkDateRange(discountEnum);
 			return payment;
 		} else {
+			payment.setErrorCode(DISCOUNT_ERROR_CODE);
+			payment.setErrorMessage(DISCOUNT_ERROR_MESSAGE);
 			return payment;
 		}
 
 	}
 
+	/**
+	 * We keep payment dates on the ENUM objects
+	 * 
+	 * @param discountEnum
+	 * @return payment
+	 */
 	private Payment checkDateRange(DiscountCodes discountEnum) {
 
 		LocalDate startDate = EventManagementUtils.parseDateWithFormat(discountEnum.getStartDate(), DATE_FORMAT);

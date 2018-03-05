@@ -39,7 +39,7 @@ public class SimpleBinNumberChecker implements BinNumberChecker {
 		HashMap<Long, String> validDebitCardPaymentBanks = new HashMap<>();
 		validDebitCardPaymentBanks.put(12L, "Halk Bankası");
 
-		validDebitCardPaymentBanksIM = Collections.unmodifiableMap(validCreditCardPaymentBanks);
+		validDebitCardPaymentBanksIM = Collections.unmodifiableMap(validDebitCardPaymentBanks);
 
 	}
 
@@ -57,24 +57,26 @@ public class SimpleBinNumberChecker implements BinNumberChecker {
 	@Override
 	public Payment processPaymentRulesForTicketSelling(BinNumber binNumberObj, Payment payment) {
 
-		if (CardTypes.CREDIT_CARD.toString() == binNumberObj.getCardType()) {
+		if (CardTypes.CREDIT_CARD.toString().equals(binNumberObj.getCardType())) {
 
 			if (validCreditCardPaymentBanksIM.containsKey(binNumberObj.getBankCode())) {
 				// we allow payment for this type of card and for this bank
+				payment.setCardType(CardTypes.CREDIT_CARD.toString());
 			} else {
 				// not allowed, we set error codes
 				payment.setErrorCode(PAYMENT_NOT_SUPPORTED_ERROR_CODE);
-				payment.setErrorCode(PAYMENT_NOT_SUPPORTED_ERROR_MESSAGE);
+				payment.setErrorMessage(PAYMENT_NOT_SUPPORTED_ERROR_MESSAGE);
 			}
 
-		} else if (CardTypes.DEBIT_CARD.toString() == binNumberObj.getCardType()) {
+		} else if (CardTypes.DEBIT_CARD.toString().equals(binNumberObj.getCardType())) {
 
 			if (validDebitCardPaymentBanksIM.containsKey(binNumberObj.getBankCode())) {
 				// we allow payment for this type of card and for this bank
+				payment.setCardType(CardTypes.DEBIT_CARD.toString());
 			} else {
 				// not allowed, we set error codes
 				payment.setErrorCode(PAYMENT_NOT_SUPPORTED_ERROR_CODE);
-				payment.setErrorCode(PAYMENT_NOT_SUPPORTED_ERROR_MESSAGE);
+				payment.setErrorMessage(PAYMENT_NOT_SUPPORTED_ERROR_MESSAGE);
 			}
 
 		}

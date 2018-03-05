@@ -4,6 +4,12 @@ import com.iyzipay.model.Payment;
 import com.iyzipay.model.PaymentCard;
 import com.yucel.model.IncomingPaymentPayload;
 
+/**
+ * Makes basic validations
+ * 
+ * @author yucel.ozan
+ *
+ */
 public class TicketPaymentPreValidator {
 
 	private static final String QUANTITY_ERROR_CODE = "QUANTITY_ERROR_CODE";
@@ -16,6 +22,9 @@ public class TicketPaymentPreValidator {
 
 	private static final int CARD_NUMBER_LENGHT = 16;
 
+	private TicketPaymentPreValidator() {
+		// no need to instantiate this object
+	}
 	
 	public static Payment validateFields(IncomingPaymentPayload paymentPayload, Payment payment) {
 		// Quantity check
@@ -36,9 +45,13 @@ public class TicketPaymentPreValidator {
 
 	public static Boolean validatePaymentPayload(IncomingPaymentPayload paymentPayload) {
 		Boolean result = Boolean.TRUE;
-
-		PaymentCard paymentCard = paymentPayload.getPaymentCard();
-		if (paymentPayload == null || paymentCard == null || paymentCard.getCardNumber() == null
+		PaymentCard paymentCard = null;
+		if (paymentPayload != null) {
+			paymentCard = paymentPayload.getPaymentCard();
+		}else {
+			result = Boolean.FALSE;
+		}
+		if (paymentCard == null || paymentCard.getCardNumber() == null
 				|| paymentCard.getCardHolderName() == null || paymentCard.getExpireYear() == null
 				|| paymentCard.getExpireMonth() == null || paymentCard.getCvc() == null
 				|| paymentCard.getCardNumber().trim().length() != CARD_NUMBER_LENGHT) {

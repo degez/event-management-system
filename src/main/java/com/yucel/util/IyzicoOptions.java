@@ -11,6 +11,7 @@ import com.yucel.service.PaymentApiOptions;
 
 @Service
 @PropertySource(value = "classpath:application.properties")
+@PropertySource(value = "file:${config.dir}", ignoreResourceNotFound = true)
 public class IyzicoOptions extends Options implements EnvironmentAware, PaymentApiOptions{
 
 	@Autowired
@@ -19,7 +20,7 @@ public class IyzicoOptions extends Options implements EnvironmentAware, PaymentA
 	private IyzicoOptions options;
 
 	public IyzicoOptions() {
-
+		// default empty constructor
 	}
 	
     @Override
