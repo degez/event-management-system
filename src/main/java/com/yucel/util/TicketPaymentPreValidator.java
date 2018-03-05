@@ -4,6 +4,12 @@ import com.iyzipay.model.Payment;
 import com.iyzipay.model.PaymentCard;
 import com.yucel.model.IncomingPaymentPayload;
 
+/**
+ * Makes basic validations
+ * 
+ * @author yucel.ozan
+ *
+ */
 public class TicketPaymentPreValidator {
 
 	private static final String QUANTITY_ERROR_CODE = "QUANTITY_ERROR_CODE";
@@ -16,7 +22,7 @@ public class TicketPaymentPreValidator {
 
 	private static final int CARD_NUMBER_LENGHT = 16;
 
-	public TicketPaymentPreValidator() {
+	private TicketPaymentPreValidator() {
 		// no need to instantiate this object
 	}
 	
