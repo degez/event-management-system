@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ import com.yucel.resource.TicketPaymentResourceAssembler;
 import com.yucel.service.TicketPaymentService;
 
 @RestController
+@CrossOrigin(origins = "*")
 @ExposesResourceFor(TicketPaymentResource.class)
 @RequestMapping(value = TicketPaymentResourceConstant.ROOT)
 public class TicketPaymentController {
