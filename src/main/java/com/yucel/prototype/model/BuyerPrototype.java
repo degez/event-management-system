@@ -23,7 +23,7 @@ public class BuyerPrototype extends Buyer implements PaymentRequestObject {
 		this.setLastLoginDate("2018-03-04 12:43:35");
 		this.setRegistrationDate("2018-03-04 02:43:35");
 		this.setRegistrationAddress("Dummy address for assignment");
-		this.setIp("127.0.0.1");
+		this.setIp("some_ip_address");
 		this.setCity("Istanbul");
 		this.setCountry("Turkey");
 		this.setZipCode("34000");

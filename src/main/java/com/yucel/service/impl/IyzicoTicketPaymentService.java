@@ -1,8 +1,9 @@
 package com.yucel.service.impl;
 
 import java.math.BigDecimal;
-import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,8 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 
 	private static final String PERIOD_ERROR_MESSAGE = "Tickets not available for current date";
 
+	private static Logger logger = LoggerFactory.getLogger(IyzicoTicketPaymentService.class);
+
 	@Autowired
 	PaymentApiOptions options;
 
@@ -45,6 +48,9 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 	@Autowired
 	TicketPaymentPersistenceService ticketPaymentPersistenceService;
 
+	/* (non-Javadoc)
+	 * @see com.yucel.service.TicketPaymentService#tryPayment(com.yucel.model.IncomingPaymentPayload)
+	 */
 	@Override
 	public Payment tryPayment(IncomingPaymentPayload paymentPayload) {
 		Payment payment = new Payment();
@@ -54,23 +60,27 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		String discountCode = paymentPayload.getDiscountCode();
 
 		if (payment.getErrorCode() != null) {
+			logger.error("validation of fields failed" + payment.getErrorCode());
 			return payment;
 		}
+		logger.info("Payment Step 1 - validation of fields passed");
 
+		PaymentCard paymentCard = paymentPayload.getPaymentCard();
+		String conversationId = EventManagementUtils.generateConversationId(paymentCard);
 		// After field validation we need to validate if the discount code is valid
 		// if it is not, we do not need to make requests for payment
 		if (discountCode != null && !"".equals(discountCode)) {
 			payment = discountCodeValidator.checkDiscountCode(paymentPayload);
 		}
+		
+		payment.setConversationId(conversationId);
 
 		if (payment.getErrorCode() != null) {
+			logger.error("discount is not valid" + payment.getErrorCode());
 			return payment;
 		}
+		logger.info("Payment Step 2 - discount ops passed");
 
-		PaymentCard paymentCard = paymentPayload.getPaymentCard();
-
-		String conversationId = EventManagementUtils.generateConversationId(paymentCard);
-		payment.setConversationId(conversationId);
 
 		paymentCard.setCardNumber(paymentCard.getCardNumber().replace(" ", "").trim());
 
@@ -79,14 +89,18 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		payment = applyBinNumberConstraints(payment, conversationId, binNumber);
 
 		if (payment.getErrorCode() != null) {
+			logger.error("bin number is out of our service" + payment.getErrorCode());
 			return payment;
 		}
+		logger.info("Payment Step 3 - bin number validation passed");
 
 		payment = calculatePayment(payment, paymentPayload);
 
 		if (payment.getErrorCode() != null) {
+			logger.error("payment calculation failed" + payment.getErrorCode());
 			return payment;
 		}
+		logger.info("Payment Step 4 - payment calculations passed");
 
 		
 		CreatePaymentRequest paymentRequest = paymentRequestBuilder.buildPaymentRequest(payment, paymentPayload);
@@ -96,23 +110,20 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		requestWrapper.setPayment(payment);
 		// save request data before the call
 		requestWrapper = ticketPaymentPersistenceService.save(requestWrapper);
-		System.out.println("before save");
-		System.out.println(payment);
-		System.out.println(requestWrapper.getPayment());
+		logger.info("before the request of the payment:");
+		logger.info(payment.toString());
 		
 		payment = Payment.create(paymentRequest, options.getOptions());
+		logger.info("Payment Step 5 - payment request made to iyzico");
 
+		
 		// save the result
 		requestWrapper.setPayment(payment);
 		requestWrapper = ticketPaymentPersistenceService.save(requestWrapper);
-		System.out.println("after save");
-		System.out.println(payment);
-		System.out.println(requestWrapper.getPayment());
+		logger.info("save success of the payment:");
+		logger.info(payment.toString());
+		
 
-		List<CreatePaymentRequestWrapper> allItems = ticketPaymentPersistenceService.findAll();
-		for (CreatePaymentRequestWrapper createPaymentRequestWrapper : allItems) {
-			System.out.println(createPaymentRequestWrapper.getId());
-		}
 		return payment;
 	}
 

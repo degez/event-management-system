@@ -16,6 +16,9 @@ public class TicketPaymentPreValidator {
 
 	private static final int CARD_NUMBER_LENGHT = 16;
 
+	public TicketPaymentPreValidator() {
+		// no need to instantiate this object
+	}
 	
 	public static Payment validateFields(IncomingPaymentPayload paymentPayload, Payment payment) {
 		// Quantity check
@@ -36,9 +39,13 @@ public class TicketPaymentPreValidator {
 
 	public static Boolean validatePaymentPayload(IncomingPaymentPayload paymentPayload) {
 		Boolean result = Boolean.TRUE;
-
-		PaymentCard paymentCard = paymentPayload.getPaymentCard();
-		if (paymentPayload == null || paymentCard == null || paymentCard.getCardNumber() == null
+		PaymentCard paymentCard = null;
+		if (paymentPayload != null) {
+			paymentCard = paymentPayload.getPaymentCard();
+		}else {
+			result = Boolean.FALSE;
+		}
+		if (paymentCard == null || paymentCard.getCardNumber() == null
 				|| paymentCard.getCardHolderName() == null || paymentCard.getExpireYear() == null
 				|| paymentCard.getExpireMonth() == null || paymentCard.getCvc() == null
 				|| paymentCard.getCardNumber().trim().length() != CARD_NUMBER_LENGHT) {

@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iyzipay.model.Payment;
 import com.yucel.exception.TicketPaymentNotFoundException;
+import com.yucel.exception.ValidationOfValuesException;
 import com.yucel.exception.InvalidRequestException;
 import com.yucel.model.IncomingPaymentPayload;
 import com.yucel.model.TicketPaymentResourceConstant;
 import com.yucel.resource.TicketPaymentResource;
 import com.yucel.resource.TicketPaymentResourceAssembler;
 import com.yucel.service.TicketPaymentService;
-
 
 @RestController
 @ExposesResourceFor(TicketPaymentResource.class)
@@ -35,7 +35,6 @@ public class TicketPaymentController {
 
 	private static Logger logger = LoggerFactory.getLogger(TicketPaymentController.class);
 
-	
 	@Autowired
 	TicketPaymentResourceAssembler paymentResourceAssembler;
 
@@ -51,23 +50,27 @@ public class TicketPaymentController {
 			throw new InvalidRequestException("Invalid " + paymentRequest.getClass().getSimpleName(), bindingResult);
 		}
 		Payment payment = paymentService.tryPayment(paymentRequest);
+		String errorCode = payment.getErrorCode();
+		if (errorCode != null) {
+			throw new ValidationOfValuesException(errorCode);
+		}
+
 		Resource<String> resource = new Resource<String>(payment.getConversationId());
 		resource.add(paymentResourceAssembler.linkToSingleResource(payment));
 		logger.info("Payment: " + payment);
 		return new ResponseEntity<Resource<String>>(resource, HttpStatus.CREATED);
 	}
-	
-    @ResponseBody
-    @RequestMapping(
-                    value = TicketPaymentResourceConstant.ID, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<TicketPaymentResource> getPayment(@PathVariable(
-                    value = "id") String id) {
-        Payment entity = paymentService.getPayment(id);
-        if (entity == null) {
-            throw new TicketPaymentNotFoundException(String.valueOf(id));
-        }
-        final TicketPaymentResource resource = paymentResourceAssembler.toResource(entity);
-        return ResponseEntity.ok(resource);
-    }
+
+	@ResponseBody
+	@RequestMapping(value = TicketPaymentResourceConstant.ID, method = RequestMethod.GET, produces = {
+			MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<TicketPaymentResource> getPayment(@PathVariable(value = "id") String id) {
+		Payment entity = paymentService.getPayment(id);
+		if (entity == null) {
+			throw new TicketPaymentNotFoundException(String.valueOf(id));
+		}
+		final TicketPaymentResource resource = paymentResourceAssembler.toResource(entity);
+		return ResponseEntity.ok(resource);
+	}
 
 }

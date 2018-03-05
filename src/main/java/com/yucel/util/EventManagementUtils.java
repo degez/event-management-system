@@ -14,6 +14,10 @@ import com.yucel.model.DiscountCodes;
 public class EventManagementUtils {
 	public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
 
+	public EventManagementUtils() {
+		// no need to instantiate this object
+	}
+	
 	public static DiscountCodes getIfDiscountExists(String discountCode) {
 
 		if (DiscountCodes.GAMMA.toString().equals(discountCode)) {
