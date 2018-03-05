@@ -47,6 +47,8 @@ public class ConferenceDiscountCodeValidator implements DiscountCodeValidator {
 			payment = checkDateRange(discountEnum);
 			return payment;
 		} else {
+			payment.setErrorCode(DISCOUNT_ERROR_CODE);
+			payment.setErrorMessage(DISCOUNT_ERROR_MESSAGE);
 			return payment;
 		}
 

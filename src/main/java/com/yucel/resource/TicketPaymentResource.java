@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.iyzipay.model.Payment;
@@ -17,61 +16,61 @@ public class TicketPaymentResource extends ResourceSupport {
 
 	private Payment payment;
 
-	@JsonCreator
-	public TicketPaymentResource(@JsonProperty("binNumber") String binNumber, @JsonProperty("cardType") String cardType,
-			@JsonProperty("cardAssociation") String cardAssociation, @JsonProperty("cardFamily") String cardFamily,
-			@JsonProperty("status") String status, @JsonProperty("errorCode") String errorCode,
-			@JsonProperty("errorMessage") String errorMessage, @JsonProperty("errorGroup") String errorGroup,
-			@JsonProperty("locale") String locale, @JsonProperty("systemTime") Long systemTime,
-			@JsonProperty("conversationId") String conversationId,
-
-			@JsonProperty("price") BigDecimal price, @JsonProperty("paidPrice") BigDecimal paidPrice,
-			@JsonProperty("currency") String currency, @JsonProperty("installment") Integer installment,
-			@JsonProperty("paymentId") String paymentId, @JsonProperty("paymentStatus") String paymentStatus,
-			@JsonProperty("fraudStatus") Integer fraudStatus,
-			@JsonProperty("merchantCommissionRate") BigDecimal merchantCommissionRate,
-			@JsonProperty("merchantCommissionRateAmount") BigDecimal merchantCommissionRateAmount,
-			@JsonProperty("iyziCommissionRateAmount") BigDecimal iyziCommissionRateAmount,
-			@JsonProperty("iyziCommissionFee") BigDecimal iyziCommissionFee,
-			@JsonProperty("cardToken") String cardToken, @JsonProperty("cardUserKey") String cardUserKey,
-			@JsonProperty("basketId") String basketId, @JsonProperty("paymentItems") List<PaymentItem> paymentItems,
-			@JsonProperty("connectorName") String connectorName, @JsonProperty("authCode") String authCode,
-			@JsonProperty("phase") String phase, @JsonProperty("lastFourDigits") String lastFourDigits) {
-
-		super();
-		this.payment = new Payment();
-		this.payment.setBinNumber(binNumber);
-		this.payment.setCardType(cardType);
-		this.payment.setCardAssociation(cardAssociation);
-		this.payment.setCardFamily(cardFamily);
-		this.payment.setStatus(status);
-		this.payment.setErrorCode(errorCode);
-		this.payment.setErrorMessage(errorMessage);
-		this.payment.setErrorGroup(errorGroup);
-		this.payment.setLocale(locale);
-		this.payment.setSystemTime(systemTime);
-		this.payment.setConversationId(conversationId);
-		this.payment.setPrice(price);
-		this.payment.setPaidPrice(paidPrice);
-		this.payment.setCurrency(currency);
-		this.payment.setInstallment(installment);
-		this.payment.setPaymentId(paymentId);
-		this.payment.setPaymentStatus(paymentStatus);
-		this.payment.setFraudStatus(fraudStatus);
-		this.payment.setMerchantCommissionRate(merchantCommissionRate);
-		this.payment.setMerchantCommissionRateAmount(merchantCommissionRateAmount);
-		this.payment.setIyziCommissionRateAmount(iyziCommissionRateAmount);
-		this.payment.setIyziCommissionFee(iyziCommissionFee);
-		this.payment.setCardToken(cardToken);
-		this.payment.setCardUserKey(cardUserKey);
-		this.payment.setBasketId(basketId);
-		this.payment.setPaymentItems(paymentItems);
-		this.payment.setConnectorName(connectorName);
-		this.payment.setAuthCode(authCode);
-		this.payment.setPhase(phase);
-		this.payment.setLastFourDigits(lastFourDigits);
-		
-	}
+//	@JsonCreator
+//	public TicketPaymentResource(@JsonProperty("binNumber") String binNumber, @JsonProperty("cardType") String cardType,
+//			@JsonProperty("cardAssociation") String cardAssociation, @JsonProperty("cardFamily") String cardFamily,
+//			@JsonProperty("status") String status, @JsonProperty("errorCode") String errorCode,
+//			@JsonProperty("errorMessage") String errorMessage, @JsonProperty("errorGroup") String errorGroup,
+//			@JsonProperty("locale") String locale, @JsonProperty("systemTime") Long systemTime,
+//			@JsonProperty("conversationId") String conversationId,
+//
+//			@JsonProperty("price") BigDecimal price, @JsonProperty("paidPrice") BigDecimal paidPrice,
+//			@JsonProperty("currency") String currency, @JsonProperty("installment") Integer installment,
+//			@JsonProperty("paymentId") String paymentId, @JsonProperty("paymentStatus") String paymentStatus,
+//			@JsonProperty("fraudStatus") Integer fraudStatus,
+//			@JsonProperty("merchantCommissionRate") BigDecimal merchantCommissionRate,
+//			@JsonProperty("merchantCommissionRateAmount") BigDecimal merchantCommissionRateAmount,
+//			@JsonProperty("iyziCommissionRateAmount") BigDecimal iyziCommissionRateAmount,
+//			@JsonProperty("iyziCommissionFee") BigDecimal iyziCommissionFee,
+//			@JsonProperty("cardToken") String cardToken, @JsonProperty("cardUserKey") String cardUserKey,
+//			@JsonProperty("basketId") String basketId, @JsonProperty("paymentItems") List<PaymentItem> paymentItems,
+//			@JsonProperty("connectorName") String connectorName, @JsonProperty("authCode") String authCode,
+//			@JsonProperty("phase") String phase, @JsonProperty("lastFourDigits") String lastFourDigits) {
+//
+//		super();
+//		this.payment = new Payment();
+//		this.payment.setBinNumber(binNumber);
+//		this.payment.setCardType(cardType);
+//		this.payment.setCardAssociation(cardAssociation);
+//		this.payment.setCardFamily(cardFamily);
+//		this.payment.setStatus(status);
+//		this.payment.setErrorCode(errorCode);
+//		this.payment.setErrorMessage(errorMessage);
+//		this.payment.setErrorGroup(errorGroup);
+//		this.payment.setLocale(locale);
+//		this.payment.setSystemTime(systemTime);
+//		this.payment.setConversationId(conversationId);
+//		this.payment.setPrice(price);
+//		this.payment.setPaidPrice(paidPrice);
+//		this.payment.setCurrency(currency);
+//		this.payment.setInstallment(installment);
+//		this.payment.setPaymentId(paymentId);
+//		this.payment.setPaymentStatus(paymentStatus);
+//		this.payment.setFraudStatus(fraudStatus);
+//		this.payment.setMerchantCommissionRate(merchantCommissionRate);
+//		this.payment.setMerchantCommissionRateAmount(merchantCommissionRateAmount);
+//		this.payment.setIyziCommissionRateAmount(iyziCommissionRateAmount);
+//		this.payment.setIyziCommissionFee(iyziCommissionFee);
+//		this.payment.setCardToken(cardToken);
+//		this.payment.setCardUserKey(cardUserKey);
+//		this.payment.setBasketId(basketId);
+//		this.payment.setPaymentItems(paymentItems);
+//		this.payment.setConnectorName(connectorName);
+//		this.payment.setAuthCode(authCode);
+//		this.payment.setPhase(phase);
+//		this.payment.setLastFourDigits(lastFourDigits);
+//		
+//	}
 
 	public TicketPaymentResource(Payment payment) {
 		super();

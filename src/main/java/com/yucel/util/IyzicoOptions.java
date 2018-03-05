@@ -19,7 +19,7 @@ public class IyzicoOptions extends Options implements EnvironmentAware, PaymentA
 	private IyzicoOptions options;
 
 	public IyzicoOptions() {
-
+		// default empty constructor
 	}
 	
     @Override
