@@ -44,12 +44,15 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 
 	@Autowired
 	PaymentRequestBuilder paymentRequestBuilder;
-	
+
 	@Autowired
 	TicketPaymentPersistenceService ticketPaymentPersistenceService;
 
-	/* (non-Javadoc)
-	 * @see com.yucel.service.TicketPaymentService#tryPayment(com.yucel.model.IncomingPaymentPayload)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.yucel.service.TicketPaymentService#tryPayment(com.yucel.model.
+	 * IncomingPaymentPayload)
 	 */
 	@Override
 	public Payment tryPayment(IncomingPaymentPayload paymentPayload) {
@@ -72,7 +75,7 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		if (discountCode != null && !"".equals(discountCode)) {
 			payment = discountCodeValidator.checkDiscountCode(paymentPayload);
 		}
-		
+
 		payment.setConversationId(conversationId);
 
 		if (payment.getErrorCode() != null) {
@@ -80,7 +83,6 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 			return payment;
 		}
 		logger.info("Payment Step 2 - discount ops passed");
-
 
 		paymentCard.setCardNumber(paymentCard.getCardNumber().replace(" ", "").trim());
 
@@ -102,7 +104,6 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		}
 		logger.info("Payment Step 4 - payment calculations passed");
 
-		
 		CreatePaymentRequest paymentRequest = paymentRequestBuilder.buildPaymentRequest(payment, paymentPayload);
 		CreatePaymentRequestWrapper requestWrapper = new CreatePaymentRequestWrapper();
 		requestWrapper.setId(conversationId);
@@ -112,17 +113,15 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 		requestWrapper = ticketPaymentPersistenceService.save(requestWrapper);
 		logger.info("before the request of the payment:");
 		logger.info(payment.toString());
-		
+
 		payment = Payment.create(paymentRequest, options.getOptions());
 		logger.info("Payment Step 5 - payment request made to iyzico");
 
-		
 		// save the result
 		requestWrapper.setPayment(payment);
 		requestWrapper = ticketPaymentPersistenceService.save(requestWrapper);
 		logger.info("save success of the payment:");
 		logger.info(payment.toString());
-		
 
 		return payment;
 	}
@@ -184,11 +183,14 @@ public class IyzicoTicketPaymentService implements TicketPaymentService {
 
 	@Override
 	public Payment getPayment(String id) {
-		
-		CreatePaymentRequestWrapper createPaymentRequestWrapper = ticketPaymentPersistenceService.findByConversationId(id);
-		
-		return createPaymentRequestWrapper.getPayment();
+
+		CreatePaymentRequestWrapper createPaymentRequestWrapper = ticketPaymentPersistenceService
+				.findByConversationId(id);
+		if (createPaymentRequestWrapper != null) {
+			return createPaymentRequestWrapper.getPayment();
+		} else {
+			return null;
+		}
 	}
 
-	
 }
